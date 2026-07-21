@@ -332,6 +332,20 @@
     margin-right:6px;
     font-size:10px;
   }
+  .insurance-panel{
+    display:none;
+    align-items:center;
+    gap:10px;
+    margin-top:12px;
+    padding-top:10px;
+    border-top:1px dashed var(--panel-line);
+  }
+  .insurance-panel.show{display:flex;}
+  .insurance-question{
+    font-size:12px;
+    color:var(--gold);
+    letter-spacing:.03em;
+  }
 
   .hint{
     font-family:Arial,Helvetica,sans-serif;
@@ -424,12 +438,18 @@
       <button class="btn" id="splitBtn" disabled><span class="key">P</span>Split</button>
       <button class="btn" id="hitBtn" disabled><span class="key">H</span>Hit</button>
     </div>
+    <div class="insurance-panel" id="insurancePanel">
+      <span class="insurance-question" id="insuranceQuestion">Insurance?</span>
+      <button class="btn" id="insuranceYesBtn"><span class="key">Y</span>Yes</button>
+      <button class="btn secondary" id="insuranceNoBtn"><span class="key">N</span>No</button>
+    </div>
   </div>
 </div>
 
 <div class="hint">
   <b>Bet keys:</b> C clear &middot; 2 = +$25 &middot; 1 = +$100 &middot; 5 = +$500 &nbsp;|&nbsp;
   <b>Play keys:</b> D deal &middot; S stand &middot; T double &middot; P split &middot; H hit &nbsp;|&nbsp;
+  <b>Insurance:</b> Y yes &middot; N no &nbsp;|&nbsp;
   Chips ($5/$10) can also be clicked directly to build a bet.
 </div>
 
@@ -454,7 +474,8 @@
   let hands = [];        // array of {cards, bet, status, isDouble}
   let activeHandIndex = 0;
   let roundActive = false;
-  let phase = 'betting';  // betting | playerTurn | dealerTurn | roundOver
+  let phase = 'betting';  // betting | insurance | playerTurn | dealerTurn | roundOver
+  let insuranceAmount = 0;
 
   // ---------------- DOM refs ----------------
   const el = id => document.getElementById(id);
@@ -475,6 +496,10 @@
   const clearBetBtn = el('clearBetBtn');
   const deckCountSel = el('deckCount');
   const bjPayoutSel = el('bjPayout');
+  const insurancePanel = el('insurancePanel');
+  const insuranceQuestion = el('insuranceQuestion');
+  const insuranceYesBtn = el('insuranceYesBtn');
+  const insuranceNoBtn = el('insuranceNoBtn');
 
   // ---------------- Shoe management ----------------
   function buildShoe(){
@@ -630,13 +655,22 @@
     hands[0].cards.push(drawCard());
     dealer.cards.push(drawCard());
 
-    phase = 'playerTurn';
     updateStatsDisplay();
     renderDealer(false);
     renderPlayer();
     setControlsForBetting(false);
     setMessage('\u00A0');
 
+    if(dealer.cards[0].rank === 'A'){
+      offerInsurance();
+      return;
+    }
+
+    resolveInitialDeal();
+  }
+
+  function resolveInitialDeal(){
+    phase = 'playerTurn';
     const playerBJ = isBlackjack(hands[0].cards);
     const dealerBJ = isBlackjack(dealer.cards);
 
@@ -648,7 +682,63 @@
     refreshActionButtons();
   }
 
-  function finishRoundImmediate(playerBJ, dealerBJ){
+  function offerInsurance(){
+    phase = 'insurance';
+    insuranceAmount = Math.floor(hands[0].bet / 2);
+    insuranceQuestion.textContent = `Dealer shows an Ace — Insurance for $${insuranceAmount}?`;
+    insurancePanel.classList.add('show');
+    insuranceYesBtn.disabled = insuranceAmount <= 0 || insuranceAmount > bankroll;
+    setMessage(`Dealer shows an Ace. Insurance? (Y / N)`);
+  }
+
+  function resolveInsurance(taken){
+    if(phase !== 'insurance') return;
+
+    if(taken && (insuranceAmount <= 0 || insuranceAmount > bankroll)){
+      setMessage("Not enough bankroll for insurance — treated as No.");
+      taken = false;
+    }
+
+    insurancePanel.classList.remove('show');
+
+    let insuranceTaken = false;
+    if(taken && insuranceAmount > 0 && insuranceAmount <= bankroll){
+      bankroll -= insuranceAmount;
+      insuranceTaken = true;
+      updateStatsDisplay();
+    }
+
+    const dealerBJ = isBlackjack(dealer.cards);
+
+    if(dealerBJ){
+      // Dealer has Blackjack: reveal hole card, settle insurance and the main
+      // bet, and end the hand immediately without any further player action.
+      const playerBJ = isBlackjack(hands[0].cards);
+      let parts = [];
+      if(insuranceTaken){
+        bankroll += insuranceAmount * 3; // 2:1 payout plus the insurance stake back
+        parts.push(`Insurance wins $${insuranceAmount * 2}.`);
+      } else {
+        parts.push('Dealer has Blackjack.');
+      }
+      let prefix = parts.join(' ') + ' ';
+      finishRoundImmediate(playerBJ, true, prefix);
+      return;
+    }
+
+    // No dealer Blackjack: insurance (if taken) is lost; continue normally.
+    const note = insuranceTaken ? 'No dealer Blackjack — insurance lost. ' : '';
+    phase = 'playerTurn';
+    const playerBJ = isBlackjack(hands[0].cards);
+    if(playerBJ){
+      finishRoundImmediate(playerBJ, false, note);
+      return;
+    }
+    setMessage(note || '\u00A0');
+    refreshActionButtons();
+  }
+
+  function finishRoundImmediate(playerBJ, dealerBJ, prefix){
     phase = 'dealerTurn';
     renderDealer(true);
     renderPlayer();
@@ -664,7 +754,7 @@
       msg = 'Dealer has Blackjack. You lose.';
     }
     updateStatsDisplay();
-    setMessage(msg);
+    setMessage((prefix || '') + msg);
     endRoundControls();
   }
 
@@ -849,6 +939,8 @@
   doubleBtn.addEventListener('click', playerDouble);
   splitBtn.addEventListener('click', playerSplit);
   hitBtn.addEventListener('click', playerHit);
+  insuranceYesBtn.addEventListener('click', ()=>resolveInsurance(true));
+  insuranceNoBtn.addEventListener('click', ()=>resolveInsurance(false));
 
   deckCountSel.addEventListener('change', ()=>{
     if(phase === 'betting') buildShoe();
@@ -873,6 +965,8 @@
       case '2': e.preventDefault(); addToBet(25); break;
       case '1': e.preventDefault(); addToBet(100); break;
       case '5': e.preventDefault(); addToBet(500); break;
+      case 'y': e.preventDefault(); resolveInsurance(true); break;
+      case 'n': e.preventDefault(); resolveInsurance(false); break;
     }
   });
 
