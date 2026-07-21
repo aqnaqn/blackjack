@@ -617,6 +617,7 @@
     renderDealer(false);
     renderPlayer();
     setControlsForBetting(false);
+    setMessage('\u00A0');
 
     const playerBJ = isBlackjack(hands[0].cards);
     const dealerBJ = isBlackjack(dealer.cards);
@@ -806,12 +807,6 @@
     standBtn.disabled = false;
     doubleBtn.disabled = !(twoCards && h.bet <= bankroll);
     splitBtn.disabled = !(twoCards && cardValue(h.cards[0]) === cardValue(h.cards[1]) && h.bet <= bankroll && hands.length < 4);
-
-    const options = ['Hit', 'Stand'];
-    if(!doubleBtn.disabled) options.push('Double');
-    if(!splitBtn.disabled) options.push('Split');
-    const last = options.pop();
-    setMessage(options.length ? `Your move: ${options.join(', ')}, or ${last}.` : `Your move: ${last}.`);
   }
 
   // ---------------- Reset deal button state for a new betting round ----------------
