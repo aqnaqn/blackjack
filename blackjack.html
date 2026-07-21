@@ -18,7 +18,7 @@
     --panel-line:rgba(212,175,55,.35);
   }
   *{box-sizing:border-box;}
-  html,body{height:100%;}
+  html,body{min-height:100%;}
   body{
     margin:0;
     font-family:Georgia,'Times New Roman',serif;
@@ -30,6 +30,8 @@
     flex-direction:column;
     align-items:center;
     padding:18px 12px 40px;
+    overflow-y:auto;
+    overflow-x:hidden;
   }
   h1{
     font-weight:400;
@@ -52,7 +54,7 @@
   /* ---------- Top bars ---------- */
   .topbar{
     width:100%;
-    max-width:920px;
+    max-width:1180px;
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
@@ -97,18 +99,18 @@
 
   /* ---------- Table ---------- */
   .table{
-    width:100%;
-    max-width:920px;
+    width:96%;
+    max-width:1180px;
     background:
       radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.05), transparent 60%),
       repeating-linear-gradient(45deg, rgba(255,255,255,.015) 0 2px, transparent 2px 6px),
       radial-gradient(ellipse at 50% 30%, #0f4a37 0%, var(--felt-1) 55%, var(--felt-2) 100%);
     border:10px solid var(--rail);
-    border-radius:140px 140px 24px 24px / 60px 60px 24px 24px;
+    border-radius:70px 70px 24px 24px / 46px 46px 24px 24px;
     box-shadow:0 0 0 4px var(--rail-dark), 0 20px 40px rgba(0,0,0,.55), inset 0 0 60px rgba(0,0,0,.45);
-    padding:26px 24px 20px;
+    padding:44px 56px 32px;
     position:relative;
-    min-height:420px;
+    min-height:520px;
   }
   .table::before{
     content:"♠ BLACKJACK PAYS 3:2 ♦";
@@ -122,7 +124,7 @@
     margin-bottom:6px;
   }
 
-  .zone{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;margin:8px 0;}
+  .zone{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;margin:8px 0;width:100%;}
   .zone-label{
     font-family:Arial,Helvetica,sans-serif;
     font-size:11px;
@@ -143,7 +145,16 @@
   .hand-score.bust{color:#ff8a80;}
   .hand-score.blackjack{color:#ffd54f;}
 
-  .hands-row{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;}
+  .hands-row{
+    display:flex;
+    gap:26px;
+    flex-wrap:wrap;
+    justify-content:center;
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    padding:4px 6px 10px;
+  }
   .hand-block{
     display:flex;
     flex-direction:column;
@@ -151,9 +162,16 @@
     padding:8px 10px;
     border-radius:12px;
     transition:box-shadow .2s;
+    flex-shrink:0;
   }
   .hand-block.active-hand{box-shadow:0 0 0 2px var(--gold), 0 0 18px rgba(212,175,55,.4);}
-  .cards{display:flex;}
+  .cards{
+    display:flex;
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:6px 8px;
+  }
   .card{
     width:64px;height:92px;
     background:linear-gradient(160deg,#fffef8,#f2efe4);
@@ -223,7 +241,7 @@
   /* ---------- Controls ---------- */
   .controls{
     width:100%;
-    max-width:920px;
+    max-width:1180px;
     display:flex;
     flex-wrap:wrap;
     gap:14px;
@@ -319,7 +337,7 @@
     font-family:Arial,Helvetica,sans-serif;
     font-size:10.5px;
     color:rgba(240,234,214,.55);
-    max-width:920px;
+    max-width:1180px;
     text-align:center;
     margin-top:14px;
     line-height:1.6;
