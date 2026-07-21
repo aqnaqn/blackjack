@@ -204,23 +204,20 @@
     color:var(--gold);
     text-shadow:0 1px 3px rgba(0,0,0,.6);
   }
-  .table-bet{
-    text-align:center;
+  .table-bet-circle{
+    width:58px;
+    height:58px;
+    margin:0 auto 10px;
+    border-radius:50%;
+    border:2px solid var(--gold);
+    background:rgba(0,0,0,.3);
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-family:Arial,Helvetica,sans-serif;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    font-size:12px;
-    color:var(--gold-dim);
-    margin-bottom:10px;
-  }
-  .table-bet span{
-    font-family:Georgia,serif;
-    font-size:20px;
+    font-size:13px;
+    font-weight:bold;
     color:var(--gold);
-    letter-spacing:0;
-    text-transform:none;
-    margin-left:6px;
-    text-shadow:0 1px 3px rgba(0,0,0,.6);
   }
 
   /* ---------- Controls ---------- */
@@ -377,7 +374,7 @@
 
   <div class="message" id="message">Place your bet, then press D to deal.</div>
 
-  <div class="table-bet">Bet<span id="tableBetDisplay">$0</span></div>
+  <div class="table-bet-circle" id="tableBetDisplay">$0</div>
 
   <div class="zone" id="playerZone">
     <div class="zone-label">Player</div>
@@ -629,7 +626,6 @@
       return;
     }
 
-    setMessage('Your move: Hit, Stand, Double, or Split.');
     refreshActionButtons();
   }
 
@@ -810,6 +806,12 @@
     standBtn.disabled = false;
     doubleBtn.disabled = !(twoCards && h.bet <= bankroll);
     splitBtn.disabled = !(twoCards && cardValue(h.cards[0]) === cardValue(h.cards[1]) && h.bet <= bankroll && hands.length < 4);
+
+    const options = ['Hit', 'Stand'];
+    if(!doubleBtn.disabled) options.push('Double');
+    if(!splitBtn.disabled) options.push('Split');
+    const last = options.pop();
+    setMessage(options.length ? `Your move: ${options.join(', ')}, or ${last}.` : `Your move: ${last}.`);
   }
 
   // ---------------- Reset deal button state for a new betting round ----------------
