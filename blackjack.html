@@ -204,6 +204,24 @@
     color:var(--gold);
     text-shadow:0 1px 3px rgba(0,0,0,.6);
   }
+  .table-bet{
+    text-align:center;
+    font-family:Arial,Helvetica,sans-serif;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    font-size:12px;
+    color:var(--gold-dim);
+    margin-bottom:10px;
+  }
+  .table-bet span{
+    font-family:Georgia,serif;
+    font-size:20px;
+    color:var(--gold);
+    letter-spacing:0;
+    text-transform:none;
+    margin-left:6px;
+    text-shadow:0 1px 3px rgba(0,0,0,.6);
+  }
 
   /* ---------- Controls ---------- */
   .controls{
@@ -359,6 +377,8 @@
 
   <div class="message" id="message">Place your bet, then press D to deal.</div>
 
+  <div class="table-bet">Bet<span id="tableBetDisplay">$0</span></div>
+
   <div class="zone" id="playerZone">
     <div class="zone-label">Player</div>
     <div class="hands-row" id="playerHands"></div>
@@ -376,7 +396,6 @@
       <div class="chip" data-v="500" title="Add $500 (key 5)">$500<span class="key">5</span></div>
     </div>
     <div class="bet-row">
-      <div class="bet-amount" id="betAmountDisplay">$0</div>
       <button class="btn secondary" id="clearBetBtn">Clear (C)</button>
     </div>
   </div>
@@ -427,7 +446,7 @@
   const bankrollVal = el('bankrollVal');
   const betVal = el('betVal');
   const shoeVal = el('shoeVal');
-  const betAmountDisplay = el('betAmountDisplay');
+  const tableBetDisplay = el('tableBetDisplay');
   const messageEl = el('message');
   const dealerCardsEl = el('dealerCards');
   const dealerScoreEl = el('dealerScore');
@@ -557,7 +576,7 @@
   function updateStatsDisplay(){
     bankrollVal.textContent = '$' + bankroll;
     betVal.textContent = '$' + currentBet;
-    betAmountDisplay.textContent = '$' + currentBet;
+    tableBetDisplay.textContent = '$' + currentBet;
   }
 
   function setMessage(msg){
@@ -713,27 +732,29 @@
     setControlsForBetting(false);
     hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = true;
 
+    // Reveal the hole card first, before dealing any further dealer cards.
+    renderDealer(true);
+    setMessage("Dealer reveals hole card...");
+
     if(allHandsBust()){
-      renderDealer(true);
-      settleRound();
+      setTimeout(settleRound, 700);
       return;
     }
-
-    renderDealer(false);
-    setMessage("Dealer's turn...");
 
     function step(){
       const score = handScore(dealer.cards);
       if(score < 17){
-        dealer.cards.push(drawCard());
-        renderDealer(false);
-        setTimeout(step, 550);
+        setTimeout(()=>{
+          dealer.cards.push(drawCard());
+          renderDealer(true);
+          setMessage("Dealer hits...");
+          setTimeout(step, 550);
+        }, 550);
       } else {
-        renderDealer(true);
         settleRound();
       }
     }
-    setTimeout(step, 600);
+    setTimeout(step, 700);
   }
 
   function settleRound(){
@@ -767,14 +788,11 @@
   function endRoundControls(){
     phase = 'roundOver';
     hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = true;
-    currentBet = 0;
+    // Leave the last bet amount in place for the next round, clamped to bankroll.
+    currentBet = Math.min(currentBet, bankroll);
     updateStatsDisplay();
-    dealBtn.disabled = false;
-    dealBtn.textContent = '';
-    const span = document.createElement('span');
-    span.className = 'key'; span.textContent = 'D';
-    dealBtn.appendChild(span);
-    dealBtn.appendChild(document.createTextNode('New Round'));
+    resetDealBtnLabel();
+    dealBtn.disabled = currentBet <= 0;
     phase = 'betting';
     if(bankroll <= 0){
       setMessage('Bankroll depleted. Refresh the chips below to continue? (Reload page to reset.)');
