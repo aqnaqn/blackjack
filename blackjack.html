@@ -18,37 +18,36 @@
     --panel-line:rgba(212,175,55,.35);
   }
   *{box-sizing:border-box;}
-  html,body{min-height:100%;}
+  html,body{height:100%;}
   body{
     margin:0;
     font-family:Georgia,'Times New Roman',serif;
     color:var(--cream);
     background:
       radial-gradient(ellipse at 50% 20%, var(--felt-1) 0%, var(--felt-2) 70%, #051a13 100%);
-    min-height:100vh;
+    height:100vh;
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding:18px 12px 40px;
-    overflow-y:auto;
-    overflow-x:hidden;
+    padding:14px 12px 16px;
+    overflow:hidden;
   }
   h1{
     font-weight:400;
     letter-spacing:.12em;
     text-transform:uppercase;
-    font-size:28px;
-    margin:6px 0 2px;
+    font-size:22px;
+    margin:2px 0 2px;
     color:var(--gold);
     text-shadow:0 2px 6px rgba(0,0,0,.6);
   }
   .subtitle{
     font-family:Arial,Helvetica,sans-serif;
-    font-size:11px;
+    font-size:10px;
     letter-spacing:.2em;
     text-transform:uppercase;
     color:var(--gold-dim);
-    margin-bottom:16px;
+    margin-bottom:10px;
   }
 
   /* ---------- Top bars ---------- */
@@ -60,7 +59,7 @@
     align-items:flex-start;
     gap:12px;
     flex-wrap:wrap;
-    margin-bottom:14px;
+    margin-bottom:8px;
   }
   .stats{
     font-family:Arial,Helvetica,sans-serif;
@@ -157,11 +156,11 @@
       repeating-linear-gradient(45deg, rgba(255,255,255,.015) 0 2px, transparent 2px 6px),
       radial-gradient(ellipse at 50% 30%, #0f4a37 0%, var(--felt-1) 55%, var(--felt-2) 100%);
     border:10px solid var(--rail);
-    border-radius:70px 70px 24px 24px / 46px 46px 24px 24px;
+    border-radius:50px 50px 24px 24px / 34px 34px 24px 24px;
     box-shadow:0 0 0 4px var(--rail-dark), 0 20px 40px rgba(0,0,0,.55), inset 0 0 60px rgba(0,0,0,.45);
-    padding:44px 40px 32px;
+    padding:24px 32px 20px;
     position:relative;
-    min-height:520px;
+    min-height:380px;
   }
   .table::before{
     content:"♠ BLACKJACK PAYS 3:2 ♦";
@@ -175,7 +174,7 @@
     margin-bottom:6px;
   }
 
-  .zone{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;margin:8px 0;width:100%;}
+  .zone{min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;margin:4px 0;width:100%;}
   .zone-label{
     font-family:Arial,Helvetica,sans-serif;
     font-size:11px;
@@ -264,31 +263,13 @@
 
   .table-body{
     display:flex;
-    align-items:stretch;
-    gap:20px;
-  }
-  .table-left{
-    flex:1 1 64%;
-    min-width:0;
-    display:flex;
     flex-direction:column;
     align-items:center;
   }
-  .table-right{
-    flex:0 0 30%;
-    min-width:170px;
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    justify-content:center;
-    gap:14px;
-    padding-left:20px;
-    border-left:1px dashed rgba(212,175,55,.3);
-  }
 
-  /* ---------- Message / outcome (right side) ---------- */
+  /* ---------- Message / outcome (between dealer and player) ---------- */
   .message{
-    text-align:left;
+    text-align:center;
     font-family:Arial,Helvetica,sans-serif;
     letter-spacing:.05em;
     font-size:15px;
@@ -313,7 +294,7 @@
     color:var(--gold);
   }
   .outcome-message{
-    text-align:left;
+    text-align:center;
     font-family:Arial,Helvetica,sans-serif;
     font-size:15px;
     font-weight:bold;
@@ -420,12 +401,12 @@
 
   .hint{
     font-family:Arial,Helvetica,sans-serif;
-    font-size:10.5px;
+    font-size:10px;
     color:rgba(240,234,214,.55);
     max-width:1040px;
     text-align:center;
-    margin-top:14px;
-    line-height:1.6;
+    margin-top:8px;
+    line-height:1.5;
   }
   .hint b{color:var(--gold-dim);}
 
@@ -433,20 +414,6 @@
     .game-layout{flex-direction:column;align-items:center;}
     .sidebar{flex:0 0 auto;width:100%;max-width:460px;}
     .table{max-width:100%;width:100%;}
-  }
-
-  @media (max-width:720px){
-    .table-body{flex-direction:column;}
-    .table-right{
-      border-left:none;
-      border-top:1px dashed rgba(212,175,55,.3);
-      padding-left:0;
-      padding-top:14px;
-      align-items:center;
-      text-align:center;
-      width:100%;
-    }
-    .message,.outcome-message{text-align:center;}
   }
 
   @media (max-width:520px){
@@ -540,24 +507,20 @@
 
   <div class="table">
     <div class="table-body">
-      <div class="table-left">
-        <div class="zone" id="dealerZone">
-          <div class="zone-label">Dealer</div>
-          <div class="cards" id="dealerCards"></div>
-          <div class="hand-score" id="dealerScore">&nbsp;</div>
-        </div>
-
-        <div class="table-bet-circle" id="tableBetDisplay">$0</div>
-
-        <div class="zone" id="playerZone">
-          <div class="zone-label">Player</div>
-          <div class="hands-row" id="playerHands"></div>
-        </div>
+      <div class="zone" id="dealerZone">
+        <div class="zone-label">Dealer</div>
+        <div class="cards" id="dealerCards"></div>
+        <div class="hand-score" id="dealerScore">&nbsp;</div>
       </div>
 
-      <div class="table-right">
-        <div class="message" id="message">Place your bet, then press D to deal.</div>
-        <div class="outcome-message" id="outcomeMessage"></div>
+      <div class="table-bet-circle" id="tableBetDisplay">$0</div>
+
+      <div class="message" id="message">Place your bet, then press D to deal.</div>
+      <div class="outcome-message" id="outcomeMessage"></div>
+
+      <div class="zone" id="playerZone">
+        <div class="zone-label">Player</div>
+        <div class="hands-row" id="playerHands"></div>
       </div>
     </div>
   </div>
