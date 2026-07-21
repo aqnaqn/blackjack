@@ -82,12 +82,14 @@
     border-radius:8px;
     padding:8px 16px;
     display:flex;
+    flex-wrap:wrap;
     gap:16px;
     align-items:center;
     font-size:12px;
   }
   .options label{display:flex;flex-direction:column;gap:3px;color:var(--gold-dim);letter-spacing:.08em;text-transform:uppercase;font-size:10px;}
-  .options select{
+  .options select,
+  .options input[type="number"]{
     font-family:Arial,Helvetica,sans-serif;
     background:#1c3327;
     color:var(--cream);
@@ -96,6 +98,8 @@
     padding:4px 6px;
     font-size:12px;
   }
+  .options input[type="number"]{width:88px;}
+  .options .btn{align-self:flex-end;}
 
   /* ---------- Table ---------- */
   .table{
@@ -380,10 +384,10 @@
   <div class="options">
     <label>Decks
       <select id="deckCount">
-        <option value="1">1</option>
+        <option value="1" selected>1</option>
         <option value="2">2</option>
         <option value="4">4</option>
-        <option value="6" selected>6</option>
+        <option value="6">6</option>
         <option value="8">8</option>
       </select>
     </label>
@@ -394,6 +398,10 @@
         <option value="1">1 : 1</option>
       </select>
     </label>
+    <label>Starting bankroll
+      <input type="number" id="startingBankroll" value="1000" min="100" step="100">
+    </label>
+    <button class="btn secondary" id="resetGameBtn" title="Reset bankroll, bet, and shoe to starting values">Reset Game</button>
   </div>
 </div>
 
@@ -496,6 +504,8 @@
   const clearBetBtn = el('clearBetBtn');
   const deckCountSel = el('deckCount');
   const bjPayoutSel = el('bjPayout');
+  const startingBankrollInput = el('startingBankroll');
+  const resetGameBtn = el('resetGameBtn');
   const insurancePanel = el('insurancePanel');
   const insuranceQuestion = el('insuranceQuestion');
   const insuranceYesBtn = el('insuranceYesBtn');
@@ -970,14 +980,43 @@
     }
   });
 
-  // ---------------- Init ----------------
-  function init(){
+  // ---------------- Reset ----------------
+  function resetGame(){
+    let startAmt = parseInt(startingBankrollInput.value, 10);
+    if(isNaN(startAmt) || startAmt <= 0) startAmt = 1000;
+    startingBankrollInput.value = startAmt;
+
+    bankroll = startAmt;
+    currentBet = 0;
+    dealer = { cards: [] };
+    hands = [];
+    activeHandIndex = 0;
+    roundActive = false;
+    phase = 'betting';
+    insuranceAmount = 0;
+    insurancePanel.classList.remove('show');
+
     buildShoe();
     bjPayout = parseFloat(bjPayoutSel.value);
+
     updateStatsDisplay();
-    dealBtn.disabled = true;
     renderDealer(false);
     renderPlayer();
+    resetDealBtnLabel();
+    dealBtn.disabled = true;
+    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = true;
+    setMessage('Place your bet, then press D to deal.');
+  }
+
+  resetGameBtn.addEventListener('click', ()=>{
+    if(confirm('Reset the game to starting values? This clears your current bankroll and bet.')){
+      resetGame();
+    }
+  });
+
+  // ---------------- Init ----------------
+  function init(){
+    resetGame();
   }
   init();
 })();
