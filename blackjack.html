@@ -215,14 +215,37 @@
     border:2px solid var(--gold);
   }
 
-  /* ---------- Message strip ---------- */
+  .table-body{
+    display:flex;
+    align-items:stretch;
+    gap:20px;
+  }
+  .table-left{
+    flex:1 1 64%;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .table-right{
+    flex:0 0 30%;
+    min-width:170px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:center;
+    gap:14px;
+    padding-left:20px;
+    border-left:1px dashed rgba(212,175,55,.3);
+  }
+
+  /* ---------- Message / outcome (right side) ---------- */
   .message{
-    text-align:center;
+    text-align:left;
     font-family:Arial,Helvetica,sans-serif;
     letter-spacing:.05em;
-    font-size:16px;
+    font-size:15px;
     min-height:24px;
-    margin:8px 0 4px;
     color:var(--gold);
     text-shadow:0 1px 3px rgba(0,0,0,.6);
   }
@@ -230,6 +253,7 @@
     width:58px;
     height:58px;
     flex-shrink:0;
+    margin:10px 0;
     border-radius:50%;
     border:2px solid var(--gold);
     background:rgba(0,0,0,.3);
@@ -241,16 +265,11 @@
     font-weight:bold;
     color:var(--gold);
   }
-  .bet-outcome-row{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:14px;
-    margin-bottom:10px;
-  }
   .outcome-message{
+    text-align:left;
     font-family:Arial,Helvetica,sans-serif;
-    font-size:14px;
+    font-size:15px;
+    font-weight:bold;
     color:var(--gold);
     text-shadow:0 1px 3px rgba(0,0,0,.6);
     min-height:18px;
@@ -358,11 +377,26 @@
     padding-top:10px;
     border-top:1px dashed var(--panel-line);
   }
-  .insurance-panel.show{display:flex;}
+  .insurance-panel.show{display:flex;flex-wrap:wrap;}
   .insurance-question{
     font-size:12px;
     color:var(--gold);
     letter-spacing:.03em;
+  }
+  .double-less-prefix{
+    color:var(--gold);
+    font-size:14px;
+    margin-right:-4px;
+  }
+  #doubleLessInput{
+    width:80px;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#1c3327;
+    color:var(--cream);
+    border:1px solid var(--gold-dim);
+    border-radius:4px;
+    padding:5px 6px;
+    font-size:13px;
   }
 
   .hint{
@@ -375,6 +409,20 @@
     line-height:1.6;
   }
   .hint b{color:var(--gold-dim);}
+
+  @media (max-width:720px){
+    .table-body{flex-direction:column;}
+    .table-right{
+      border-left:none;
+      border-top:1px dashed rgba(212,175,55,.3);
+      padding-left:0;
+      padding-top:14px;
+      align-items:center;
+      text-align:center;
+      width:100%;
+    }
+    .message,.outcome-message{text-align:center;}
+  }
 
   @media (max-width:520px){
     .table{padding:18px 10px;}
@@ -420,22 +468,26 @@
 </div>
 
 <div class="table">
-  <div class="zone" id="dealerZone">
-    <div class="zone-label">Dealer</div>
-    <div class="cards" id="dealerCards"></div>
-    <div class="hand-score" id="dealerScore">&nbsp;</div>
-  </div>
+  <div class="table-body">
+    <div class="table-left">
+      <div class="zone" id="dealerZone">
+        <div class="zone-label">Dealer</div>
+        <div class="cards" id="dealerCards"></div>
+        <div class="hand-score" id="dealerScore">&nbsp;</div>
+      </div>
 
-  <div class="message" id="message">Place your bet, then press D to deal.</div>
+      <div class="table-bet-circle" id="tableBetDisplay">$0</div>
 
-  <div class="bet-outcome-row">
-    <div class="table-bet-circle" id="tableBetDisplay">$0</div>
-    <div class="outcome-message" id="outcomeMessage"></div>
-  </div>
+      <div class="zone" id="playerZone">
+        <div class="zone-label">Player</div>
+        <div class="hands-row" id="playerHands"></div>
+      </div>
+    </div>
 
-  <div class="zone" id="playerZone">
-    <div class="zone-label">Player</div>
-    <div class="hands-row" id="playerHands"></div>
+    <div class="table-right">
+      <div class="message" id="message">Place your bet, then press D to deal.</div>
+      <div class="outcome-message" id="outcomeMessage"></div>
+    </div>
   </div>
 </div>
 
@@ -460,6 +512,7 @@
       <button class="btn" id="dealBtn"><span class="key">D</span>Deal</button>
       <button class="btn" id="standBtn" disabled><span class="key">S</span>Stand</button>
       <button class="btn" id="doubleBtn" disabled><span class="key">T</span>Double</button>
+      <button class="btn" id="doubleLessBtn" disabled><span class="key">L</span>Double for less</button>
       <button class="btn" id="splitBtn" disabled><span class="key">P</span>Split</button>
       <button class="btn" id="hitBtn" disabled><span class="key">H</span>Hit</button>
     </div>
@@ -468,12 +521,19 @@
       <button class="btn" id="insuranceYesBtn"><span class="key">Y</span>Yes</button>
       <button class="btn secondary" id="insuranceNoBtn"><span class="key">N</span>No</button>
     </div>
+    <div class="insurance-panel" id="doubleLessPanel">
+      <span class="insurance-question" id="doubleLessQuestion">Double for how much?</span>
+      <span class="double-less-prefix">$</span>
+      <input type="number" id="doubleLessInput" min="1" step="1">
+      <button class="btn" id="doubleLessOkBtn">OK <span class="key">&#9166;</span></button>
+      <button class="btn secondary" id="doubleLessCancelBtn">Cancel <span class="key">Esc</span></button>
+    </div>
   </div>
 </div>
 
 <div class="hint">
   <b>Bet keys:</b> C clear &middot; 2 = +$25 &middot; 1 = +$100 &middot; 5 = +$500 &nbsp;|&nbsp;
-  <b>Play keys:</b> D deal &middot; S stand &middot; T double &middot; P split &middot; H hit &nbsp;|&nbsp;
+  <b>Play keys:</b> D deal &middot; S stand &middot; T double &middot; L double for less &middot; P split &middot; H hit &nbsp;|&nbsp;
   <b>Insurance:</b> Y yes &middot; N no &nbsp;|&nbsp;
   Chips ($5/$10) can also be clicked directly to build a bet.
 </div>
@@ -517,6 +577,7 @@
   const dealBtn = el('dealBtn');
   const standBtn = el('standBtn');
   const doubleBtn = el('doubleBtn');
+  const doubleLessBtn = el('doubleLessBtn');
   const splitBtn = el('splitBtn');
   const hitBtn = el('hitBtn');
   const clearBetBtn = el('clearBetBtn');
@@ -528,6 +589,10 @@
   const insuranceQuestion = el('insuranceQuestion');
   const insuranceYesBtn = el('insuranceYesBtn');
   const insuranceNoBtn = el('insuranceNoBtn');
+  const doubleLessPanel = el('doubleLessPanel');
+  const doubleLessInput = el('doubleLessInput');
+  const doubleLessOkBtn = el('doubleLessOkBtn');
+  const doubleLessCancelBtn = el('doubleLessCancelBtn');
 
   // ---------------- Shoe management ----------------
   function buildShoe(){
@@ -796,6 +861,7 @@
 
   function playerHit(){
     if(phase !== 'playerTurn') return;
+    if(doubleLessPanel.classList.contains('show')) return;
     const h = currentHand();
     h.cards.push(drawCard());
     renderPlayer();
@@ -813,17 +879,24 @@
 
   function playerStand(){
     if(phase !== 'playerTurn') return;
+    if(doubleLessPanel.classList.contains('show')) return;
     currentHand().status = 'stood';
     advanceHand();
   }
 
-  function playerDouble(){
+  function playerDouble(extraOverride){
     if(phase !== 'playerTurn') return;
+    if(doubleLessPanel.classList.contains('show')) return;
     const h = currentHand();
     if(h.cards.length !== 2) return;
-    if(h.bet > bankroll){ setMessage("Not enough bankroll to double."); return; }
-    bankroll -= h.bet;
-    h.bet *= 2;
+    const extra = (typeof extraOverride === 'number') ? extraOverride : h.bet;
+    if(extra <= 0 || extra > h.bet){
+      setMessage(`Double amount must be between $1 and $${h.bet}.`);
+      return;
+    }
+    if(extra > bankroll){ setMessage("Not enough bankroll to double."); return; }
+    bankroll -= extra;
+    h.bet += extra;
     h.isDouble = true;
     h.cards.push(drawCard());
     updateStatsDisplay();
@@ -831,6 +904,42 @@
     const score = handScore(h.cards);
     h.status = score > 21 ? 'bust' : 'doubled';
     advanceHand();
+  }
+
+  function offerDoubleForLess(){
+    if(phase !== 'playerTurn') return;
+    if(doubleLessPanel.classList.contains('show')) return;
+    const h = currentHand();
+    if(h.cards.length !== 2) return;
+    if(bankroll <= 0){ setMessage("Not enough bankroll to double for less."); return; }
+    const maxAmt = Math.min(h.bet, bankroll);
+    doubleLessInput.min = 1;
+    doubleLessInput.max = maxAmt;
+    doubleLessInput.value = Math.max(1, Math.min(maxAmt, Math.floor(h.bet / 2)));
+    doubleLessPanel.classList.add('show');
+    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = doubleLessBtn.disabled = true;
+    doubleLessInput.focus();
+    doubleLessInput.select();
+  }
+
+  function cancelDoubleForLess(){
+    doubleLessPanel.classList.remove('show');
+    if(phase === 'playerTurn') refreshActionButtons();
+  }
+
+  function confirmDoubleForLess(){
+    const h = currentHand();
+    const amt = parseInt(doubleLessInput.value, 10);
+    if(isNaN(amt) || amt <= 0 || amt > h.bet){
+      setMessage(`Enter an amount between $1 and $${h.bet}.`);
+      return;
+    }
+    if(amt > bankroll){
+      setMessage("Not enough bankroll for that amount.");
+      return;
+    }
+    doubleLessPanel.classList.remove('show');
+    playerDouble(amt);
   }
 
   function playerSplit(){
@@ -869,7 +978,7 @@
   function dealerPlay(){
     phase = 'dealerTurn';
     setControlsForBetting(false);
-    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = true;
+    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = doubleLessBtn.disabled = true;
 
     // Reveal the hole card first, before dealing any further dealer cards.
     renderDealer(true);
@@ -927,7 +1036,7 @@
 
   function endRoundControls(){
     phase = 'roundOver';
-    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = true;
+    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = doubleLessBtn.disabled = true;
     // Leave the last bet amount in place for the next round, clamped to bankroll.
     currentBet = Math.min(currentBet, bankroll);
     updateStatsDisplay();
@@ -949,6 +1058,7 @@
     hitBtn.disabled = false;
     standBtn.disabled = false;
     doubleBtn.disabled = !(twoCards && h.bet <= bankroll);
+    doubleLessBtn.disabled = !(twoCards && bankroll > 0);
     splitBtn.disabled = !(twoCards && cardValue(h.cards[0]) === cardValue(h.cards[1]) && h.bet <= bankroll && hands.length < 4);
   }
 
@@ -972,10 +1082,18 @@
   });
   standBtn.addEventListener('click', playerStand);
   doubleBtn.addEventListener('click', playerDouble);
+  doubleLessBtn.addEventListener('click', offerDoubleForLess);
+  doubleLessOkBtn.addEventListener('click', confirmDoubleForLess);
+  doubleLessCancelBtn.addEventListener('click', cancelDoubleForLess);
   splitBtn.addEventListener('click', playerSplit);
   hitBtn.addEventListener('click', playerHit);
   insuranceYesBtn.addEventListener('click', ()=>resolveInsurance(true));
   insuranceNoBtn.addEventListener('click', ()=>resolveInsurance(false));
+
+  doubleLessInput.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){ e.preventDefault(); confirmDoubleForLess(); }
+    else if(e.key === 'Escape'){ e.preventDefault(); cancelDoubleForLess(); }
+  });
 
   deckCountSel.addEventListener('change', ()=>{
     if(phase === 'betting') buildShoe();
@@ -995,6 +1113,7 @@
       case 's': e.preventDefault(); playerStand(); break;
       case 'p': e.preventDefault(); playerSplit(); break;
       case 't': e.preventDefault(); playerDouble(); break;
+      case 'l': e.preventDefault(); offerDoubleForLess(); break;
       case 'h': e.preventDefault(); playerHit(); break;
       case 'c': e.preventDefault(); clearBet(); break;
       case '2': e.preventDefault(); addToBet(25); break;
@@ -1029,7 +1148,7 @@
     renderPlayer();
     resetDealBtnLabel();
     dealBtn.disabled = true;
-    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = true;
+    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = doubleLessBtn.disabled = true;
     setMessage('Place your bet, then press D to deal.');
     setOutcome('');
   }
