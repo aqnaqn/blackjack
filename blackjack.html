@@ -229,7 +229,7 @@
   .table-bet-circle{
     width:58px;
     height:58px;
-    margin:0 auto 10px;
+    flex-shrink:0;
     border-radius:50%;
     border:2px solid var(--gold);
     background:rgba(0,0,0,.3);
@@ -240,6 +240,20 @@
     font-size:13px;
     font-weight:bold;
     color:var(--gold);
+  }
+  .bet-outcome-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin-bottom:10px;
+  }
+  .outcome-message{
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:14px;
+    color:var(--gold);
+    text-shadow:0 1px 3px rgba(0,0,0,.6);
+    min-height:18px;
   }
 
   /* ---------- Controls ---------- */
@@ -414,7 +428,10 @@
 
   <div class="message" id="message">Place your bet, then press D to deal.</div>
 
-  <div class="table-bet-circle" id="tableBetDisplay">$0</div>
+  <div class="bet-outcome-row">
+    <div class="table-bet-circle" id="tableBetDisplay">$0</div>
+    <div class="outcome-message" id="outcomeMessage"></div>
+  </div>
 
   <div class="zone" id="playerZone">
     <div class="zone-label">Player</div>
@@ -492,6 +509,7 @@
   const shoeVal = el('shoeVal');
   const tableBetDisplay = el('tableBetDisplay');
   const messageEl = el('message');
+  const outcomeMessageEl = el('outcomeMessage');
   const dealerCardsEl = el('dealerCards');
   const dealerScoreEl = el('dealerScore');
   const playerHandsEl = el('playerHands');
@@ -633,6 +651,10 @@
     messageEl.textContent = msg;
   }
 
+  function setOutcome(msg){
+    outcomeMessageEl.textContent = msg || '';
+  }
+
   // ---------------- Betting ----------------
   function addToBet(amount){
     if(phase !== 'betting') return;
@@ -670,6 +692,7 @@
     renderPlayer();
     setControlsForBetting(false);
     setMessage('\u00A0');
+    setOutcome('');
 
     if(dealer.cards[0].rank === 'A'){
       offerInsurance();
@@ -764,7 +787,8 @@
       msg = 'Dealer has Blackjack. You lose.';
     }
     updateStatsDisplay();
-    setMessage((prefix || '') + msg);
+    setMessage(prefix ? prefix.trim() : '\u00A0');
+    setOutcome(msg);
     endRoundControls();
   }
 
@@ -896,7 +920,8 @@
     });
 
     updateStatsDisplay();
-    setMessage(results.join('   |   '));
+    setMessage('\u00A0');
+    setOutcome(results.join('   |   '));
     endRoundControls();
   }
 
@@ -1006,6 +1031,7 @@
     dealBtn.disabled = true;
     hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = true;
     setMessage('Place your bet, then press D to deal.');
+    setOutcome('');
   }
 
   resetGameBtn.addEventListener('click', ()=>{
