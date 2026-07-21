@@ -435,7 +435,7 @@
 <body>
 
 <h1>Blackjack</h1>
-<div class="subtitle">Dealer stands on 17 &middot; Insurance not offered</div>
+<div class="subtitle">Dealer hits soft 17 &middot; Insurance offered on dealer Ace</div>
 
 <div class="topbar">
   <div class="stats">
@@ -644,6 +644,19 @@
   }
   function isBlackjack(cards){
     return cards.length === 2 && handScore(cards) === 21;
+  }
+  function isSoft17(cards){
+    let total = 0, aces = 0;
+    for(const c of cards){
+      total += cardValue(c);
+      if(c.rank === 'A') aces++;
+    }
+    let usableAces = aces;
+    while(total > 21 && usableAces > 0){
+      total -= 10;
+      usableAces--;
+    }
+    return total === 17 && usableAces > 0;
   }
 
   // ---------------- Rendering ----------------
@@ -991,7 +1004,7 @@
 
     function step(){
       const score = handScore(dealer.cards);
-      if(score < 17){
+      if(score < 17 || isSoft17(dealer.cards)){
         setTimeout(()=>{
           dealer.cards.push(drawCard());
           renderDealer(true);
