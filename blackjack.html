@@ -514,14 +514,14 @@
 <div class="game-layout">
   <div class="sidebar">
     <div class="stats">
-      <div class="stat"><div class="label">Bankroll</div><div class="value" id="bankrollVal">$1000</div></div>
+      <div class="stat"><div class="label">Bankroll</div><div class="value" id="bankrollVal">$250</div></div>
       <div class="stat"><div class="label">Bet</div><div class="value" id="betVal">$0</div></div>
     </div>
 
     <div class="side-box reset-panel">
       <h3>Reset Game</h3>
       <label class="reset-label">Starting bankroll
-        <input type="number" id="startingBankroll" value="1000" min="100" step="100">
+        <input type="number" id="startingBankroll" value="250" min="100" step="100">
       </label>
       <button class="btn secondary" id="resetGameBtn" title="Reset bankroll, bet, and shoe to starting values">Reset Game</button>
     </div>
@@ -536,24 +536,24 @@
         <div class="chip" data-v="500" title="Add $500 (key 5)">$500<span class="key">5</span></div>
       </div>
       <div class="bet-row">
-        <button class="btn secondary" id="clearBetBtn">Clear (C)</button>
+        <button class="btn secondary" id="clearBetBtn">Clear (c)</button>
       </div>
     </div>
 
     <div class="side-box action-panel">
       <h3>Actions</h3>
       <div class="action-buttons">
-        <button class="btn" id="dealBtn"><span class="key">D</span>Deal</button>
-        <button class="btn" id="standBtn" disabled><span class="key">S</span>Stand</button>
-        <button class="btn" id="doubleBtn" disabled><span class="key">T</span>Double</button>
-        <button class="btn" id="doubleLessBtn" disabled><span class="key">L</span>Double for less</button>
-        <button class="btn" id="splitBtn" disabled><span class="key">P</span>Split</button>
-        <button class="btn" id="hitBtn" disabled><span class="key">Space</span>Hit</button>
+        <button class="btn" id="dealBtn"><span class="key">d</span>Deal</button>
+        <button class="btn" id="standBtn" disabled><span class="key">s</span>Stand</button>
+        <button class="btn" id="doubleBtn" disabled><span class="key">t</span>Double</button>
+        <button class="btn" id="doubleLessBtn" disabled><span class="key">l</span>Double for less</button>
+        <button class="btn" id="splitBtn" disabled><span class="key">p</span>Split</button>
+        <button class="btn" id="hitBtn" disabled><span class="key">h</span>Hit</button>
       </div>
       <div class="insurance-panel" id="insurancePanel">
         <span class="insurance-question" id="insuranceQuestion">Insurance?</span>
-        <button class="btn" id="insuranceYesBtn"><span class="key">Y</span>Yes</button>
-        <button class="btn secondary" id="insuranceNoBtn"><span class="key">N</span>No</button>
+        <button class="btn" id="insuranceYesBtn"><span class="key">y</span>Yes</button>
+        <button class="btn secondary" id="insuranceNoBtn"><span class="key">n</span>No</button>
       </div>
       <div class="insurance-panel" id="doubleLessPanel">
         <span class="insurance-question" id="doubleLessQuestion">Double for how much?</span>
@@ -575,7 +575,7 @@
 
       <div class="table-bet-circle" id="tableBetDisplay">$0</div>
 
-      <div class="message" id="message">Place your bet, then press D to deal.</div>
+      <div class="message" id="message">Place your bet, then press d to deal.</div>
       <div class="outcome-message" id="outcomeMessage"></div>
 
       <div class="zone" id="playerZone">
@@ -587,9 +587,9 @@
 </div>
 
 <div class="hint">
-  <b>Bet keys:</b> C clear &middot; 2 = +$25 &middot; 1 = +$100 &middot; 5 = +$500 &nbsp;|&nbsp;
-  <b>Play keys:</b> D deal &middot; Space hit &middot; S stand &middot; T double &middot; L double for less &middot; P split &nbsp;|&nbsp;
-  <b>Insurance:</b> Y yes &middot; N no &nbsp;|&nbsp;
+  <b>Bet keys:</b> c clear &middot; 2 = +$25 &middot; 1 = +$100 &middot; 5 = +$500 &nbsp;|&nbsp;
+  <b>Play keys:</b> d deal &middot; h hit &middot; s stand &middot; t double &middot; l double for less &middot; p split &nbsp;|&nbsp;
+  <b>Insurance:</b> y yes &middot; n no &nbsp;|&nbsp;
   <b>H</b> help &middot;
   Chips ($5/$10) can also be clicked directly to build a bet.
 </div>
@@ -603,7 +603,7 @@
 
     <h3>Betting Keys</h3>
     <table>
-      <tr><td class="key-cell">C</td><td>Clear the current bet</td></tr>
+      <tr><td class="key-cell">c</td><td>Clear the current bet</td></tr>
       <tr><td class="key-cell">2</td><td>Add $25 to the bet</td></tr>
       <tr><td class="key-cell">1</td><td>Add $100 to the bet</td></tr>
       <tr><td class="key-cell">5</td><td>Add $500 to the bet</td></tr>
@@ -611,18 +611,18 @@
 
     <h3>Play Keys</h3>
     <table>
-      <tr><td class="key-cell">D</td><td>Deal a new hand</td></tr>
-      <tr><td class="key-cell">Space</td><td>Hit &mdash; take another card</td></tr>
-      <tr><td class="key-cell">S</td><td>Stand &mdash; end your turn on this hand</td></tr>
-      <tr><td class="key-cell">T</td><td>Double down &mdash; double your bet, one more card, then stand</td></tr>
-      <tr><td class="key-cell">L</td><td>Double for less &mdash; double down for a custom amount</td></tr>
-      <tr><td class="key-cell">P</td><td>Split a pair into two hands</td></tr>
+      <tr><td class="key-cell">d</td><td>Deal a new hand</td></tr>
+      <tr><td class="key-cell">h</td><td>Hit &mdash; take another card</td></tr>
+      <tr><td class="key-cell">s</td><td>Stand &mdash; end your turn on this hand</td></tr>
+      <tr><td class="key-cell">t</td><td>Double down &mdash; double your bet, one more card, then stand</td></tr>
+      <tr><td class="key-cell">l</td><td>Double for less &mdash; double down for a custom amount</td></tr>
+      <tr><td class="key-cell">p</td><td>Split a pair into two hands</td></tr>
     </table>
 
     <h3>Insurance &amp; Double-for-Less Prompts</h3>
     <table>
-      <tr><td class="key-cell">Y</td><td>Take insurance</td></tr>
-      <tr><td class="key-cell">N</td><td>Decline insurance</td></tr>
+      <tr><td class="key-cell">y</td><td>Take insurance</td></tr>
+      <tr><td class="key-cell">n</td><td>Decline insurance</td></tr>
       <tr><td class="key-cell">Enter</td><td>Confirm a double-for-less amount</td></tr>
       <tr><td class="key-cell">Esc</td><td>Cancel a double-for-less prompt, or close this help</td></tr>
     </table>
@@ -646,7 +646,7 @@
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
   let shoe = [];
-  let bankroll = 1000;
+  let bankroll = 250;
   let currentBet = 0;
   let numDecks = 6;
   let bjPayout = 1.5;
@@ -891,7 +891,7 @@
     insuranceQuestion.textContent = `Dealer shows an Ace — Insurance for $${insuranceAmount}?`;
     insurancePanel.classList.add('show');
     insuranceYesBtn.disabled = insuranceAmount <= 0 || insuranceAmount > bankroll;
-    setMessage(`Dealer shows an Ace. Insurance? (Y / N)`);
+    setMessage(`Dealer shows an Ace. Insurance? (y / n)`);
   }
 
   function resolveInsurance(taken){
@@ -1185,7 +1185,7 @@
 
   // ---------------- Reset deal button state for a new betting round ----------------
   function resetDealBtnLabel(){
-    dealBtn.innerHTML = '<span class="key">D</span>Deal';
+    dealBtn.innerHTML = '<span class="key">d</span>Deal';
   }
 
   // ---------------- Help dialog ----------------
@@ -1244,10 +1244,10 @@
     if(e.repeat) return;
     const tag = document.activeElement.tagName;
     if(tag === 'SELECT' || tag === 'INPUT') return;
-    const key = e.key.toLowerCase();
+    const key = e.key // .toLowerCase();
 
     if(helpOverlay.classList.contains('show')){
-      if(key === 'h' || key === 'escape'){ e.preventDefault(); hideHelp(); }
+      if(key === 'H' || key === 'escape'){ e.preventDefault(); hideHelp(); }
       return;
     }
 
@@ -1257,21 +1257,21 @@
       case 'p': e.preventDefault(); playerSplit(); break;
       case 't': e.preventDefault(); playerDouble(); break;
       case 'l': e.preventDefault(); offerDoubleForLess(); break;
-      case ' ': e.preventDefault(); playerHit(); break;
+      case 'h': e.preventDefault(); playerHit(); break;
       case 'c': e.preventDefault(); clearBet(); break;
       case '2': e.preventDefault(); addToBet(25); break;
       case '1': e.preventDefault(); addToBet(100); break;
       case '5': e.preventDefault(); addToBet(500); break;
       case 'y': e.preventDefault(); resolveInsurance(true); break;
       case 'n': e.preventDefault(); resolveInsurance(false); break;
-      case 'h': e.preventDefault(); toggleHelp(); break;
+      case 'H': e.preventDefault(); toggleHelp(); break;
     }
   });
 
   // ---------------- Reset ----------------
   function resetGame(){
     let startAmt = parseInt(startingBankrollInput.value, 10);
-    if(isNaN(startAmt) || startAmt <= 0) startAmt = 1000;
+    if(isNaN(startAmt) || startAmt <= 0) startAmt = 250;
     startingBankrollInput.value = startAmt;
 
     bankroll = startAmt;
@@ -1293,7 +1293,7 @@
     resetDealBtnLabel();
     dealBtn.disabled = true;
     hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = splitBtn.disabled = doubleLessBtn.disabled = true;
-    setMessage('Place your bet, then press D to deal.');
+    setMessage('Place your bet, then press d to deal.');
     setOutcome('');
   }
 
