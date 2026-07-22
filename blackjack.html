@@ -1053,6 +1053,7 @@
     if(h.cards.length !== 2) return;
     if(cardValue(h.cards[0]) !== cardValue(h.cards[1])) return;
     if(h.bet > bankroll){ setMessage("Not enough bankroll to split."); return; }
+    const splittingAces = h.cards[0].rank === 'A' && h.cards[1].rank === 'A';
     bankroll -= h.bet;
 
     const newHand = { cards:[h.cards.pop()], bet: h.bet, status:'active', isDouble:false };
@@ -1060,14 +1061,29 @@
     newHand.cards.push(drawCard());
     hands.splice(activeHandIndex+1, 0, newHand);
 
+    if(splittingAces){
+      // Standard rule: split aces receive exactly one card each, then stand automatically.
+      h.status = handScore(h.cards) > 21 ? 'bust' : 'stood';
+      newHand.status = handScore(newHand.cards) > 21 ? 'bust' : 'stood';
+    }
+
     updateStatsDisplay();
     renderPlayer();
-    refreshActionButtons();
+
+    if(splittingAces){
+      setMessage('Split aces receive one card each and stand automatically.');
+      advanceHand();
+    } else {
+      refreshActionButtons();
+    }
   }
 
   function advanceHand(){
-    if(activeHandIndex < hands.length - 1){
+    activeHandIndex++;
+    while(activeHandIndex < hands.length && hands[activeHandIndex].status !== 'active'){
       activeHandIndex++;
+    }
+    if(activeHandIndex < hands.length){
       renderPlayer();
       refreshActionButtons();
     } else {
