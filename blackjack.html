@@ -410,6 +410,66 @@
   }
   .hint b{color:var(--gold-dim);}
 
+  .help-btn{margin-left:auto;align-self:flex-start;}
+
+  /* ---------- Help modal ---------- */
+  .help-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .help-overlay.show{display:flex;}
+  .help-dialog{
+    position:relative;
+    background:var(--panel);
+    border:2px solid var(--gold);
+    border-radius:14px;
+    padding:24px 28px;
+    max-width:520px;
+    width:100%;
+    max-height:82vh;
+    overflow-y:auto;
+    font-family:Arial,Helvetica,sans-serif;
+    color:var(--cream);
+    box-shadow:0 10px 40px rgba(0,0,0,.6);
+  }
+  .help-dialog h2{
+    margin:0 0 10px;
+    color:var(--gold);
+    font-family:Georgia,serif;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    font-size:19px;
+  }
+  .help-dialog h3{
+    color:var(--gold-dim);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    margin:18px 0 8px;
+  }
+  .help-dialog p{font-size:13px;line-height:1.6;margin:0 0 10px;}
+  .help-dialog table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .help-dialog td{padding:4px 6px;border-bottom:1px solid rgba(212,175,55,.15);vertical-align:top;}
+  .help-dialog td.key-cell{color:var(--gold);font-weight:bold;width:60px;white-space:nowrap;}
+  .help-close{
+    position:absolute;
+    top:10px;
+    right:12px;
+    background:none;
+    border:none;
+    color:var(--gold);
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+  }
+  .help-close:hover{color:var(--cream);}
+
   @media (max-width:900px){
     .game-layout{flex-direction:column;align-items:center;}
     .sidebar{flex:0 0 auto;width:100%;max-width:460px;}
@@ -448,6 +508,7 @@
       </select>
     </label>
   </div>
+  <button class="btn secondary help-btn" id="helpBtn" title="How to play (H)"><span class="key">H</span>Help</button>
 </div>
 
 <div class="game-layout">
@@ -455,7 +516,6 @@
     <div class="stats">
       <div class="stat"><div class="label">Bankroll</div><div class="value" id="bankrollVal">$1000</div></div>
       <div class="stat"><div class="label">Bet</div><div class="value" id="betVal">$0</div></div>
-      <div class="stat"><div class="label">Shoe</div><div class="value" id="shoeVal">-</div></div>
     </div>
 
     <div class="side-box reset-panel">
@@ -488,7 +548,7 @@
         <button class="btn" id="doubleBtn" disabled><span class="key">T</span>Double</button>
         <button class="btn" id="doubleLessBtn" disabled><span class="key">L</span>Double for less</button>
         <button class="btn" id="splitBtn" disabled><span class="key">P</span>Split</button>
-        <button class="btn" id="hitBtn" disabled><span class="key">H</span>Hit</button>
+        <button class="btn" id="hitBtn" disabled><span class="key">Space</span>Hit</button>
       </div>
       <div class="insurance-panel" id="insurancePanel">
         <span class="insurance-question" id="insuranceQuestion">Insurance?</span>
@@ -528,9 +588,50 @@
 
 <div class="hint">
   <b>Bet keys:</b> C clear &middot; 2 = +$25 &middot; 1 = +$100 &middot; 5 = +$500 &nbsp;|&nbsp;
-  <b>Play keys:</b> D deal &middot; S stand &middot; T double &middot; L double for less &middot; P split &middot; H hit &nbsp;|&nbsp;
+  <b>Play keys:</b> D deal &middot; Space hit &middot; S stand &middot; T double &middot; L double for less &middot; P split &nbsp;|&nbsp;
   <b>Insurance:</b> Y yes &middot; N no &nbsp;|&nbsp;
+  <b>H</b> help &middot;
   Chips ($5/$10) can also be clicked directly to build a bet.
+</div>
+
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-dialog">
+    <button class="help-close" id="helpCloseBtn" aria-label="Close help">&times;</button>
+    <h2>How to Play</h2>
+    <p>Beat the dealer by getting a hand value closer to 21 than the dealer's, without going over. Number cards count as their value, face cards count as 10, and Aces count as 1 or 11 &mdash; whichever helps your hand most. A two-card 21 is a Blackjack.</p>
+    <p>Place a bet with the chips (or the bet keys below), then deal. If the dealer's up card is an Ace, you'll be offered insurance before play continues. On your turn you can hit, stand, double down, double for a smaller custom amount, or split a pair. The dealer hits on 16 or below, and also hits on a soft 17 (an Ace counted as 11).</p>
+
+    <h3>Betting Keys</h3>
+    <table>
+      <tr><td class="key-cell">C</td><td>Clear the current bet</td></tr>
+      <tr><td class="key-cell">2</td><td>Add $25 to the bet</td></tr>
+      <tr><td class="key-cell">1</td><td>Add $100 to the bet</td></tr>
+      <tr><td class="key-cell">5</td><td>Add $500 to the bet</td></tr>
+    </table>
+
+    <h3>Play Keys</h3>
+    <table>
+      <tr><td class="key-cell">D</td><td>Deal a new hand</td></tr>
+      <tr><td class="key-cell">Space</td><td>Hit &mdash; take another card</td></tr>
+      <tr><td class="key-cell">S</td><td>Stand &mdash; end your turn on this hand</td></tr>
+      <tr><td class="key-cell">T</td><td>Double down &mdash; double your bet, one more card, then stand</td></tr>
+      <tr><td class="key-cell">L</td><td>Double for less &mdash; double down for a custom amount</td></tr>
+      <tr><td class="key-cell">P</td><td>Split a pair into two hands</td></tr>
+    </table>
+
+    <h3>Insurance &amp; Double-for-Less Prompts</h3>
+    <table>
+      <tr><td class="key-cell">Y</td><td>Take insurance</td></tr>
+      <tr><td class="key-cell">N</td><td>Decline insurance</td></tr>
+      <tr><td class="key-cell">Enter</td><td>Confirm a double-for-less amount</td></tr>
+      <tr><td class="key-cell">Esc</td><td>Cancel a double-for-less prompt, or close this help</td></tr>
+    </table>
+
+    <h3>Other</h3>
+    <table>
+      <tr><td class="key-cell">H</td><td>Open or close this help dialog</td></tr>
+    </table>
+  </div>
 </div>
 
 <script>
@@ -561,7 +662,6 @@
   const el = id => document.getElementById(id);
   const bankrollVal = el('bankrollVal');
   const betVal = el('betVal');
-  const shoeVal = el('shoeVal');
   const tableBetDisplay = el('tableBetDisplay');
   const messageEl = el('message');
   const outcomeMessageEl = el('outcomeMessage');
@@ -588,6 +688,9 @@
   const doubleLessInput = el('doubleLessInput');
   const doubleLessOkBtn = el('doubleLessOkBtn');
   const doubleLessCancelBtn = el('doubleLessCancelBtn');
+  const helpBtn = el('helpBtn');
+  const helpOverlay = el('helpOverlay');
+  const helpCloseBtn = el('helpCloseBtn');
 
   // ---------------- Shoe management ----------------
   function buildShoe(){
@@ -601,7 +704,6 @@
       }
     }
     shuffle(shoe);
-    updateShoeDisplay();
   }
   function shuffle(arr){
     for(let i=arr.length-1;i>0;i--){
@@ -611,12 +713,7 @@
   }
   function drawCard(){
     if(shoe.length < 15) buildShoe(); // reshuffle when running low
-    const c = shoe.pop();
-    updateShoeDisplay();
-    return c;
-  }
-  function updateShoeDisplay(){
-    shoeVal.textContent = shoe.length + ' cards';
+    return shoe.pop();
   }
 
   // ---------------- Scoring ----------------
@@ -1075,6 +1172,18 @@
     dealBtn.innerHTML = '<span class="key">D</span>Deal';
   }
 
+  // ---------------- Help dialog ----------------
+  function showHelp(){
+    helpOverlay.classList.add('show');
+  }
+  function hideHelp(){
+    helpOverlay.classList.remove('show');
+  }
+  function toggleHelp(){
+    if(helpOverlay.classList.contains('show')) hideHelp();
+    else showHelp();
+  }
+
   // ---------------- Event wiring ----------------
   document.querySelectorAll('.chip').forEach(chip=>{
     chip.addEventListener('click', ()=>{
@@ -1097,6 +1206,11 @@
   hitBtn.addEventListener('click', playerHit);
   insuranceYesBtn.addEventListener('click', ()=>resolveInsurance(true));
   insuranceNoBtn.addEventListener('click', ()=>resolveInsurance(false));
+  helpBtn.addEventListener('click', toggleHelp);
+  helpCloseBtn.addEventListener('click', hideHelp);
+  helpOverlay.addEventListener('click', (e)=>{
+    if(e.target === helpOverlay) hideHelp();
+  });
 
   doubleLessInput.addEventListener('keydown', (e)=>{
     if(e.key === 'Enter'){ e.preventDefault(); confirmDoubleForLess(); }
@@ -1116,19 +1230,25 @@
     if(tag === 'SELECT' || tag === 'INPUT') return;
     const key = e.key.toLowerCase();
 
+    if(helpOverlay.classList.contains('show')){
+      if(key === 'h' || key === 'escape'){ e.preventDefault(); hideHelp(); }
+      return;
+    }
+
     switch(key){
       case 'd': e.preventDefault(); if(phase==='betting'){ resetDealBtnLabel(); startRound(); } break;
       case 's': e.preventDefault(); playerStand(); break;
       case 'p': e.preventDefault(); playerSplit(); break;
       case 't': e.preventDefault(); playerDouble(); break;
       case 'l': e.preventDefault(); offerDoubleForLess(); break;
-      case 'h': e.preventDefault(); playerHit(); break;
+      case ' ': e.preventDefault(); playerHit(); break;
       case 'c': e.preventDefault(); clearBet(); break;
       case '2': e.preventDefault(); addToBet(25); break;
       case '1': e.preventDefault(); addToBet(100); break;
       case '5': e.preventDefault(); addToBet(500); break;
       case 'y': e.preventDefault(); resolveInsurance(true); break;
       case 'n': e.preventDefault(); resolveInsurance(false); break;
+      case 'h': e.preventDefault(); toggleHelp(); break;
     }
   });
 
