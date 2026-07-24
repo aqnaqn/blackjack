@@ -18,3 +18,4 @@ Keyboard shortcuts:
 * 2 add $25 to current bet
 * 5 add $500 to current bet
 * 1 add $100 to current bet
+* H show help
